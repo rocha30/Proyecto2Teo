@@ -1,8 +1,7 @@
 # Proyecto: Parser CYK para CFG (Cocke–Younger–Kasami)
 
-Este repositorio contendrá la investigación e implementación del algoritmo CYK (Cocke–Younger–Kasami) para realizar el parsing de una gramática libre de contexto (CFG) y determinar si una frase simple en inglés pertenece al lenguaje generado por dicha gramática.
+Implementación del algoritmo CYK para realizar el parsing de una gramática libre de contexto (CFG) y determinar si una frase simple en inglés pertenece al lenguaje generado por dicha gramática. Incluye conversión de gramáticas a Forma Normal de Chomsky (CNF), parser CYK con reconstrucción de árbol, y una CLI de ejemplo.
 
-> Estado: inicial (README de arranque para poder hacer el primer commit/push). La implementación se agregará en siguientes commits.
 
 ---
 
@@ -50,34 +49,31 @@ Ejemplos de oraciones:
 
 Nota: la gramática definitiva puede variar; asegúrate de mantener CNF o incluir un paso de conversión a CNF.
 
-## Estructura de proyecto (sugerida)
+## Estructura de proyecto
 
 ```
 Proyecto2/
-  ├── src/
-  │   ├── cyk.py            # Núcleo del algoritmo CYK
-  │   ├── grammar.py        # Lectura/validación de gramática (CNF)
-  │   └── parser.py         # CLI o puntos de entrada de alto nivel
-  ├── data/
-  │   └── grammar.cnf|json  # Gramática en CNF (formato a definir)
-  ├── tests/
-  │   └── test_cyk.py       # Casos de prueba (unit/integration)
-  ├── README.md
-  ├── requirements.txt      # Dependencias (si aplica)
-  └── .gitignore            # Archivos a ignorar por git
+  ├── cyk_parser.py            # CLI: corre demo o evalúa una oración
+  ├── cyk/                     # Paquete con la implementación
+  │   ├── __init__.py          # Re-exporta tipos y funciones comunes
+  │   ├── models.py            # Production, Grammar (→ CNF), Node
+  │   ├── cyk.py               # CYKParser (núcleo del algoritmo)
+  │   ├── utils.py             # normalize_sentence, pretty_tree
+  │   └── grammar_en.py        # build_project_grammar() en CNF
+  └── README.md
 ```
 
-> La estructura es una guía. Se ajustará según el lenguaje y las herramientas que se elijan.
+Requisitos:
+- Python 3.10 o superior.
 
-## Plan de trabajo (propuesto)
+## Plan de trabajo
 
 1. Investigar a fondo CYK y CNF; definir gramática objetivo para oraciones simples.
-2. Elegir lenguaje de implementación (p. ej., Python) y formatos de entrada (p. ej., JSON/YAML/propio).
-3. Implementar lector/validador de gramática y verificador de CNF.
-4. Implementar CYK (tabla, combinaciones, base y paso inductivo).
-5. (Opcional) Reconstrucción de árbol de parseo desde la tabla CYK.
-6. Agregar pruebas: casos positivos/negativos y bordes (tokens desconocidos, vacío si aplica).
-7. Documentar uso y ejemplos; optimizaciones si hicieran falta.
+2. Implementación en Python y definición de formato(s) de gramática (hecho: gramática embebida y conversión a CNF).
+3. Implementar lector/validador externo (pendiente, opcional: JSON/YAML).
+4. Implementado CYK con reconstrucción de árbol (hecho).
+5. Agregar pruebas automatizadas (pendiente) y ampliar cobertura de casos borde.
+6. Documentación de uso y ejemplos (hecho para CLI básica).
 
 ## Criterios de aceptación
 
@@ -87,24 +83,41 @@ Proyecto2/
   - Pasar al menos 5 casos de prueba positivos y 5 negativos.
   - (Opcional) Generar al menos un árbol de derivación válido cuando la oración es aceptada.
 
-## Cómo usar (TBD)
+## Cómo usar
 
-- Pendiente de la implementación. Ejemplo tentativo (si se usa Python):
+- Ejecutar el demo con varios ejemplos:
 
 ```
-python -m src.parser --grammar data/grammar.json --sentence "the dog sees a cat"
+python3 cyk_parser.py --demo
 ```
 
-- Una vez implementado, este README se actualizará con instrucciones exactas y requisitos.
+- Evaluar una oración individual (normaliza a minúsculas y elimina puntuación simple):
 
-## Pruebas (TBD)
+```
+python3 cyk_parser.py --sentence "She eats a cake with a fork"
+```
 
-- Se usarán pruebas unitarias y de integración.
-- Casos considerados:
-  - Oraciones válidas según la gramática.
-  - Oraciones con orden incorrecto.
-  - Tokens no cubiertos por la gramática.
-  - (Opcional) Cadena vacía si la gramática permite ε.
+Salida típica:
+
+```
+Entrada: She eats a cake with a fork.
+Tokens:  ['she', 'eats', 'a', 'cake', 'with', 'a', 'fork']
+Resultado: SÍ  |  Tiempo: 0.03 ms
+Parse tree:
+(S (NP she) (VP (VP (V eats) (NP (Det a) (N cake))) (PP (P with) (NP (Det a) (N fork)))))
+```
+
+## Casos límite probados
+
+- Múltiples PP consecutivos (VP → VP PP):
+  - "She eats the cake with a fork in the oven" → Acepta.
+  - "She eats the cake with a fork in the oven with a knife" → Acepta.
+- PP antes del NP objeto:
+  - "She eats with a fork the cake" → Rechaza (según la gramática actual).
+- Alternando objeto + varios PPs:
+  - "The cat drinks the juice in the oven with a fork" → Acepta.
+
+Nota: para permitir PPs antes del objeto (p. ej., "She eats with a fork the cake"), habría que extender la gramática y volver a convertir a CNF.
 
 ## Referencias
 
@@ -113,19 +126,3 @@ python -m src.parser --grammar data/grammar.json --sentence "the dog sees a cat"
 - Hopcroft, Motwani, Ullman. Introduction to Automata Theory, Languages, and Computation.
 - Jurafsky, D., & Martin, J. H. Speech and Language Processing (secciones de parsing y CNF).
 - Wikipedia: Cocke–Younger–Kasami algorithm.
-
-## Licencia
-
-Por definir.
-
-## Estado y próximos pasos
-
-- [x] Crear README inicial para permitir el primer push.
-- [ ] Elegir lenguaje y formato de gramática.
-- [ ] Implementar lector/validador de gramática (CNF).
-- [ ] Implementar algoritmo CYK.
-- [ ] Agregar pruebas y ejemplos.
-
----
-
-¿Quieres que también deje una gramática base en `data/` y un esqueleto de `src/` para continuar más rápido? Puedo agregarlo en este repo cuando lo indiques.
