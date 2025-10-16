@@ -45,13 +45,23 @@ def main():
         return
     if args.demo:
         tests = [
+            # Casos originales del proyecto
             "She eats a cake with a fork.",
             "The cat drinks the beer.",
-            "She eat a cake with a fork.",
-            "She eats cake with a fork.",
             "He cuts the meat in the oven.",
-            "The cat the beer drinks.",
             "She drinks the juice.",
+            
+            # Casos del enunciado - deben ser aceptados
+            "The dog sees a cat.",
+            "The dog barks.",
+            "She sleeps.",
+            "He runs.",
+            
+            # Casos de error gramatical - deben ser rechazados  
+            "She eat a cake with a fork.",       # Error: "eat" en lugar de "eats"
+            "She eats cake with a fork.",        # Error: falta determinante antes de "cake"
+            "The cat the beer drinks.",          # Error: orden incorrecto de palabras
+            "Dog the sees.",                     # Error: orden incorrecto + falta artículo
         ]
         for s in tests:
             print('-' * 72)
