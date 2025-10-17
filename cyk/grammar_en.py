@@ -11,24 +11,33 @@ def build_project_grammar() -> Grammar:
 
     # Regla principal
     add('S', ['NP', 'VP'])
-    # VP
-    add('VP', ['VP', 'PP'])
-    add('VP', ['V', 'NP'])
-    add('VP', ['cooks'])
+    # VP - Soporte para verbos transitivos e intransitivos
+    add('VP', ['VP', 'PP'])      # VP con frase preposicional
+    add('VP', ['V', 'NP'])       # Verbo transitivo (con objeto directo)
+    add('VP', ['V'])             # Verbo intransitivo (sin objeto directo)
+    add('VP', ['cooks'])         # Verbo directo como VP
     add('VP', ['drinks'])
     add('VP', ['eats'])
     add('VP', ['cuts'])
+    add('VP', ['sees'])          # Nuevo verbo del enunciado
+    add('VP', ['barks'])         # Nuevo verbo del enunciado
+    add('VP', ['sleeps'])        # Verbo intransitivo adicional
+    add('VP', ['runs'])          # Verbo intransitivo adicional
     # PP
     add('PP', ['P', 'NP'])
     # NP
     add('NP', ['Det', 'N'])
     add('NP', ['he'])
     add('NP', ['she'])
-    # V
+    # V - Verbos que pueden tomar objetos directos o ser intransitivos
     add('V', ['cooks'])
     add('V', ['drinks'])
     add('V', ['eats'])
     add('V', ['cuts'])
+    add('V', ['sees'])           # Verbo transitivo del enunciado
+    add('V', ['barks'])          # Puede ser intransitivo o transitivo
+    add('V', ['sleeps'])         # Generalmente intransitivo
+    add('V', ['runs'])           # Puede ser intransitivo o transitivo
     # P
     add('P', ['in'])
     add('P', ['with'])
