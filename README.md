@@ -33,19 +33,30 @@ Implementación del algoritmo CYK para realizar el parsing de una gramática lib
   - Gramática no está en CNF.
   - Tokens no cubiertos por las reglas léxicas (A → a).
 
-## Gramática ejemplo (CNF mínima, ilustrativa)
+## Gramática implementada (CNF completa)
 
+Gramática principal:
 - S → NP VP
+- VP → VP PP | V NP | V                    # Soporte para verbos transitivos e intransitivos
+- PP → P NP
 - NP → Det N
-- VP → V NP | V
+- V → "sees" | "barks" | "eats" | "cuts" | "drinks" | "cooks" | "sleeps" | "runs"
 - Det → "a" | "the"
-- N → "dog" | "cat"
-- V → "sees" | "barks"
+- N → "dog" | "cat" | "cake" | "beer" | "juice" | "meat" | "soup" | "fork" | "knife" | "oven" | "spoon"
+- P → "in" | "with"
 
-Ejemplos de oraciones:
-- Acepta: "the dog sees a cat"
-- Acepta: "the dog barks"
-- Rechaza: "dog the sees"
+Pronombres como NP directos:
+- NP → "he" | "she"
+
+Ejemplos de oraciones aceptadas:
+- ✅ "The dog sees a cat" (verbo transitivo)
+- ✅ "The dog barks" (verbo intransitivo)
+- ✅ "She eats a cake with a fork" (con frase preposicional)
+- ✅ "He sleeps" (verbo intransitivo simple)
+
+Ejemplos rechazados:
+- ❌ "Dog the sees" (orden incorrecto)
+- ❌ "She eat a cake" (error de concordancia verbal)
 
 Nota: la gramática definitiva puede variar; asegúrate de mantener CNF o incluir un paso de conversión a CNF.
 
@@ -107,17 +118,29 @@ Parse tree:
 (S (NP she) (VP (VP (V eats) (NP (Det a) (N cake))) (PP (P with) (NP (Det a) (N fork)))))
 ```
 
-## Casos límite probados
+## Casos probados y funcionalidades
 
-- Múltiples PP consecutivos (VP → VP PP):
-  - "She eats the cake with a fork in the oven" → Acepta.
-  - "She eats the cake with a fork in the oven with a knife" → Acepta.
-- PP antes del NP objeto:
-  - "She eats with a fork the cake" → Rechaza (según la gramática actual).
-- Alternando objeto + varios PPs:
-  - "The cat drinks the juice in the oven with a fork" → Acepta.
+### Verbos transitivos e intransitivos:
+- ✅ "The dog sees a cat" → Acepta (transitivo)
+- ✅ "The dog barks" → Acepta (intransitivo)  
+- ✅ "She sleeps" → Acepta (intransitivo)
+- ✅ "He runs" → Acepta (intransitivo)
 
-Nota: para permitir PPs antes del objeto (p. ej., "She eats with a fork the cake"), habría que extender la gramática y volver a convertir a CNF.
+### Frases preposicionales múltiples:
+- ✅ "She eats a cake with a fork" → Acepta
+- ✅ "He cuts the meat in the oven" → Acepta
+- ✅ "She eats the cake with a fork in the oven" → Acepta (múltiples PP)
+
+### Casos de error correctamente rechazados:
+- ❌ "She eat a cake" → Rechaza (error de concordancia)
+- ❌ "She eats cake with a fork" → Rechaza (falta determinante)
+- ❌ "The cat the beer drinks" → Rechaza (orden incorrecto)
+- ❌ "Dog the sees" → Rechaza (orden incorrecto + falta artículo)
+
+### Limitaciones conocidas:
+- PP antes del objeto directo no está soportado: "She eats with a fork the cake" → Rechaza
+- Solo pronombres "he" y "she" están incluidos
+- Vocabulario limitado al definido en la gramática
 
 ## Referencias
 
