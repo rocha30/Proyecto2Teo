@@ -2,6 +2,9 @@
 
 Implementación del algoritmo CYK para realizar el parsing de una gramática libre de contexto (CFG) y determinar si una frase simple en inglés pertenece al lenguaje generado por dicha gramática. Incluye conversión de gramáticas a Forma Normal de Chomsky (CNF), parser CYK con reconstrucción de árbol, y una CLI de ejemplo.
 
+## 📺 Presentación del Proyecto
+
+🎥 **Video de presentación**: [Ver en YouTube](https://youtu.be/AV_0ap5UayI)
 
 ---
 
